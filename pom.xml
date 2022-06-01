@@ -4,7 +4,7 @@
 
 	<groupId>078efef1-d139-48ed-92f5-f8d4a0592374</groupId>
 	<artifactId>micorp-pom</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<packaging>pom</packaging>
 
 	<name>mule-micorp-pom</name>
@@ -31,10 +31,6 @@
 		<app.runtime.server>4.4.0</app.runtime.server>
 		<app.runtime>${app.runtime.server}-20220420</app.runtime>
 
-		<!-- Properties for the json logger -->
-		<service.artifact>${project.artifactId}</service.artifact>
-		<service.version>${project.version}</service.version>
-
 		<!-- CloudHub configuration and deployment -->
 		<region>us-east-2</region>
 		<workers>1</workers>
@@ -56,26 +52,6 @@
 	</properties>
 
 	<build>
-		<resources>
-			<resource>
-				<directory>${basedir}/src/main/mule</directory>
-				<filtering>true</filtering>
-			</resource>
-			<resource>
-				<directory>${basedir}/src/main/mule/implementations</directory>
-				<filtering>true</filtering>
-			</resource>
-			<resource>
-				<directory>${basedir}/src/main/resources</directory>
-				<filtering>true</filtering>
-			</resource>
-		</resources>
-		<testResources>
-			<testResource>
-				<directory>${basedir}/src/test/resources</directory>
-				<filtering>true</filtering>
-			</testResource>
-		</testResources>
 		
 		<plugins>
 			<plugin>
@@ -141,6 +117,18 @@
 				</configuration>
 			</plugin>
 		</plugins>
+
+		<!-- Configuration of resources -->
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+			<resource>
+				<directory>src/main/mule</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>		
 	</build>
 
 	<dependencyManagement>
