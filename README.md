@@ -32,7 +32,7 @@ Configure settings.xml in your machine with the correct credentials for Anypoint
 	</servers>
 ```
 
-The <id> must be the same between settings.xml and the repository defined in pom.xml.
+The "id" element must be the same between settings.xml and the repository defined in pom.xml.
 Deploy the pom changes to Anypoint platform, from the command line type:
 
 ```xml
