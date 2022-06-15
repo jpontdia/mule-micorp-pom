@@ -4,7 +4,7 @@
 
 	<groupId>078efef1-d139-48ed-92f5-f8d4a0592374</groupId>
 	<artifactId>micorp-pom</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 	<packaging>pom</packaging>
 
 	<name>mule-micorp-pom</name>
@@ -18,8 +18,7 @@
 		<!-- Deployment properties -->
 		<deployment.env>local</deployment.env>
 		<deployment.prefix></deployment.prefix>
-		<deployment.suffix></deployment.suffix>
-		<deployment.name>${deployment.prefix}${project.artifactId}${deployment.suffix}</deployment.name>
+		<deployment.name>${deployment.prefix}${project.artifactId}-${deployment.env}</deployment.name>
 
 		<!-- Visualizer properties -->
 		<api.layer>set-in-child-pom</api.layer>		
