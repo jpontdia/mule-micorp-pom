@@ -4,16 +4,31 @@
 
 	<groupId>078efef1-d139-48ed-92f5-f8d4a0592374</groupId>
 	<artifactId>micorp-pom</artifactId>
-	<version>1.0.2</version>
+	<version>1.0.6</version>
 	<packaging>pom</packaging>
 
 	<name>mule-micorp-pom</name>
 
 	<properties>
 
-		<!-- Project configuration -->
+		<!-- Plugin properties -->
+		<maven-clean-plugin.version>3.2.0</maven-clean-plugin.version>
+		<mule.maven.plugin.version>3.5.4</mule.maven.plugin.version>
+		<maven-enforcer-plugin.version>3.0.0</maven-enforcer-plugin.version>
+		<maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
+		<munit.version>2.3.9</munit.version>
+
+		<!-- Connectors properties -->
+		<salesforce.version>10.14.5</salesforce.version>
+		<json.logger.version>3.0.0</json.logger.version>
+		<amqp.connector.version>1.7.4</amqp.connector.version>
+		<jms.connector.version>1.8.3</jms.connector.version>	
+
+		<!-- Build configuration properties -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 
 		<!-- Deployment properties -->
 		<deployment.env>local</deployment.env>
@@ -26,32 +41,24 @@
 		<anypoint.platform.visualizer.displayName>${project.artifactId}</anypoint.platform.visualizer.displayName>
 		<anypoint.platform.visualizer.layer>${api.layer}</anypoint.platform.visualizer.layer>
 		
-		<!-- Runtime configuration -->		
+		<!-- Runtime configuration -->
+		<!-- Versions: https://docs.mulesoft.com/release-notes/mule-runtime/mule-esb -->
 		<app.runtime.server>4.4.0</app.runtime.server>
-		<app.runtime>${app.runtime.server}-20220420</app.runtime>
+		<app.runtime>${app.runtime.server}-20220622</app.runtime>
 
 		<!-- CloudHub configuration and deployment -->
 		<region>us-east-2</region>
 		<workers>1</workers>
 		<workerType>MICRO</workerType>
-		
-		<!-- Plugins and connectors version -->
-		<salesforce.version>10.14.5</salesforce.version>
-		<json.logger.version>3.0.0</json.logger.version>
-		<amqp.connector.version>1.7.4</amqp.connector.version>
-		<jms.connector.version>1.8.3</jms.connector.version>
-		<munit.version>2.3.9</munit.version>
-		<mule.maven.plugin.version>3.5.4</mule.maven.plugin.version>
-			
 
 		<!-- Deployment of Parent POM in Anypoint Exchange -->
-		<!-- Try with > https://maven.anypoint.mulesoft.com/api/v3/organizations -->
 		<repository.url>https://maven.anypoint.mulesoft.com/api/v2/organizations/${project.groupId}/maven</repository.url>
 
 	</properties>
 
 	<build>
-		
+
+		<!-- These plugins will be automatically enabled for all applications -->
 		<plugins>
 			<plugin>
 				<groupId>org.mule.tools.maven</groupId>
@@ -77,7 +84,12 @@
 							<anypoint.platform.client_id>${ap.client_id}</anypoint.platform.client_id>
 							<anypoint.platform.client_secret>${ap.client_secret}</anypoint.platform.client_secret>
 							<env>${deployment.env}</env>
+
+							<!-- Service properties for datasources configuration -->
 							<encrypt.key>${encrypt.key}</encrypt.key>
+							<salesforce.user>${salesforce.user}</salesforce.user>
+							<salesforce.password>${salesforce.password}</salesforce.password>
+							<salesforce.token>${salesforce.token}</salesforce.token>
 						</properties>
 					</cloudHubDeployment>
 					<classifier>mule-application</classifier>
@@ -86,7 +98,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-clean-plugin</artifactId>
-				<version>3.0.0</version>
+				<version>${maven-clean-plugin.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>com.mulesoft.munit.tools</groupId>
@@ -115,9 +127,49 @@
 					</coverage>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<version>${maven-enforcer-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>enforce</id>
+						<configuration>
+							<rules>
+								<requireProfileIdsExist />
+								<requireMavenVersion>
+									<version>[3.6,4.0)</version>
+								</requireMavenVersion>
+							</rules>
+						</configuration>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 
-		<!-- Configuration of resources -->
+		<!-- Configure the resources plugin to skip filtering of keystore assets -->
+		<!-- 
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-resources-plugin</artifactId>
+			<version>${maven-resources-plugin.version}</version>
+			<configuration>
+				<nonFilteredFileExtensions>
+					<nonFilteredFileExtension>pfx</nonFilteredFileExtension>
+					<nonFilteredFileExtension>crt</nonFilteredFileExtension>
+					<nonFilteredFileExtension>p12</nonFilteredFileExtension>
+					<nonFilteredFileExtension>cer</nonFilteredFileExtension>
+					<nonFilteredFileExtension>pem</nonFilteredFileExtension>
+					<nonFilteredFileExtension>jks</nonFilteredFileExtension>
+				</nonFilteredFileExtensions>
+			</configuration>
+		</plugin>
+		-->
+
+		<!-- Enable referencing of Maven properties in Mule config files -->
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -216,14 +268,13 @@
 		</dependency>
 	</dependencies>
 
-
 	<!--***************-->
 	<!-- Repositories  -->
 	<!--***************-->
 
 	<repositories>
 		<repository>
-			<id>anypoint-exchange-v3</id>
+			<id>anypoint-exchange</id>
 			<name>Anypoint Exchange</name>
 			<url>https://maven.anypoint.mulesoft.com/api/v3/maven</url>
 			<layout>default</layout>
@@ -249,12 +300,12 @@
 	</pluginRepositories>
 
 	<!-- To deploy artifacts in Anypoint Organization Repository -->
-    <distributionManagement>
-        <repository>
-            <id>anypoint-exchange-v3</id>
-            <name>Anypoint Exchange Repository</name>
-            <url>${repository.url}</url>
-            <layout>default</layout>
-        </repository>
-    </distributionManagement>
+	<distributionManagement>
+		<repository>
+			<id>anypoint-exchange</id>
+			<name>Anypoint Exchange Repository</name>
+			<url>${repository.url}</url>
+			<layout>default</layout>
+		</repository>
+	</distributionManagement>
 </project>
