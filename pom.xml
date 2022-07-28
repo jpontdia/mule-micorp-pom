@@ -4,7 +4,7 @@
 
 	<groupId>078efef1-d139-48ed-92f5-f8d4a0592374</groupId>
 	<artifactId>micorp-pom</artifactId>
-	<version>1.0.6</version>
+	<version>1.0.14</version>
 	<packaging>pom</packaging>
 
 	<name>mule-micorp-pom</name>
@@ -45,6 +45,7 @@
 		<!-- Versions: https://docs.mulesoft.com/release-notes/mule-runtime/mule-esb -->
 		<app.runtime.server>4.4.0</app.runtime.server>
 		<app.runtime>${app.runtime.server}-20220622</app.runtime>
+		<!-- <app.runtime>4.4.0</app.runtime> -->
 
 		<!-- CloudHub configuration and deployment -->
 		<region>us-east-2</region>
@@ -115,6 +116,7 @@
 					</execution>
 				</executions>
 				<configuration>
+					<runtimeProduct>MULE_EE</runtimeProduct>
 					<runtimeVersion>${app.runtime}</runtimeVersion>
 					<argLines>
 						<argLine>-Xmx2048m</argLine>
